@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  main:
+    build: .
+    #    image: node:18.15
+    #    working_dir: /app
+    container_name: main
+    restart: on-failure
+    ports:
+      - "5000:5000"
+      - "9229:9229"
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    env_file:
+      - .development.env
+    tty: true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - backend
+
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    env_file:
+      - .development.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - "6543:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - backend
+networks:
+  backend:
+volumes:
+  pgdata:
+    driver: local
