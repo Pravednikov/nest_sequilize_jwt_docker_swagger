@@ -1,17 +1,16 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as uuid from 'uuid';
 
 @Injectable()
 export class FilesService {
-  private readonly s3Client = new S3Client({
-    region: this.configService.getOrThrow('AWS_S3_REGION'),
-  });
+  // TODO connect to AWS(complete registration)
+  // private readonly s3Client = new S3Client({
+  //   region: this.configService.getOrThrow('AWS_S3_REGION'),
+  // });
 
-  constructor(private readonly configService: ConfigService) {}
+  // constructor(private readonly configService: ConfigService) {}
 
   async create(file): Promise<string> {
     try {
@@ -30,13 +29,13 @@ export class FilesService {
     }
   }
 
-  async upload(fileName: string, file: Buffer) {
-    await this.s3Client.send(
-      new PutObjectCommand({
-        Bucket: 'nestjs-uploader',
-        Key: fileName,
-        Body: file,
-      }),
-    );
-  }
+  // async upload(fileName: string, file: Buffer) {
+  //   await this.s3Client.send(
+  //     new PutObjectCommand({
+  //       Bucket: 'nestjs-uploader',
+  //       Key: fileName,
+  //       Body: file,
+  //     }),
+  //   );
+  // }
 }
