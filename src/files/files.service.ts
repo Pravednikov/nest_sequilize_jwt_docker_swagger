@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as uuid from 'uuid';
 
+// TODO create and implement new interface
 @Injectable()
 export class FilesService {
   // TODO connect to AWS(complete registration)
@@ -12,7 +13,7 @@ export class FilesService {
 
   // constructor(private readonly configService: ConfigService) {}
 
-  async create(file): Promise<string> {
+  public async create(file: Express.Multer.File): Promise<string> {
     try {
       const fileName = uuid.v4() + '.jpg';
       const filePath = path.resolve(__dirname, '..', 'static');
