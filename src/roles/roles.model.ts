@@ -12,7 +12,6 @@ import { UserRoles } from './user-roles.model';
 
 interface RoleCreationAttrs {
   value: string;
-  description: string;
 }
 
 @Table({ tableName: 'roles' })
@@ -33,13 +32,6 @@ export class Role extends Model<Role, RoleCreationAttrs> {
     allowNull: false,
   })
   value: string;
-
-  @ApiProperty({ example: 'Administrator', description: 'Role description' })
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  description: string;
 
   @BelongsToMany(() => User, () => UserRoles)
   users: User[];

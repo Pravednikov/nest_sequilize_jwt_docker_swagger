@@ -1,11 +1,22 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles-auth.guard';
-import { AddRoleDto } from './dto/add-role.dto';
-import { BanUserDto } from './dto/ban-user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
 import { UsersService } from './users.service';
 
@@ -14,37 +25,38 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiOperation({ summary: 'Create user' })
-  @ApiResponse({ status: 200, type: User })
-  @Post()
-  create(@Body() userDto: CreateUserDto) {
-    return this.usersService.createUser(userDto);
-  }
-
   @ApiOperation({ summary: 'Get users' })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
   @Get()
-  getAll() {
-    return this.usersService.getUsers();
+  getAll(): Promise<User[]> {
+    return this.usersService.getAll();
   }
 
-  @ApiOperation({ summary: 'Give role' })
+  @ApiOperation({ summary: 'Get user with email' })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
-  @Post('/role')
-  addRole(@Body() dto: AddRoleDto) {
-    return this.usersService.addRole(dto);
+  @Get('/:email')
+  get(@Param('email') email: string): Promise<User> {
+    return this.usersService.get(email);
   }
 
-  @ApiOperation({ summary: 'Ban' })
-  @ApiResponse({ status: 200, type: [User] })
-  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Delete user' })
+  @ApiResponse({ status: 200 })
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
-  @Post('/ban')
-  ban(@Body() dto: BanUserDto) {
-    return this.usersService.ban(dto);
+  @Roles('ADMIN')
+  @Delete('/:id')
+  delete(@Param('id') id: number): Promise<number> {
+    return this.usersService.delete(id);
+  }
+
+  @ApiOperation({ summary: 'Update user' })
+  @ApiResponse({ status: 200 })
+  @ApiParam({ required: true, name: 'id', example: { id: 2 } })
+  @Put('/:id')
+  update(
+    @Param('id') id: number,
+    @Body() option: Partial<User>,
+  ): Promise<[affectedRows: number]> {
+    return this.usersService.update(id, option);
   }
 }
